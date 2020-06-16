@@ -1,0 +1,6 @@
+.ipynb_checkpoints
+.vscode
+__pycache__
+DisasterResponse_old.db
+classifier_test.pkl
+classifier_old.pkl

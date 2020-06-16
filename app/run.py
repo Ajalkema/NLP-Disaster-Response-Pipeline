@@ -8,11 +8,19 @@ from nltk.tokenize import word_tokenize
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
-from sklearn.externals import joblib
 from sqlalchemy import create_engine
+import joblib
 
+# import the load and clean data functions
+import sys
+sys.path.insert(1, './data')
+from process_data import load_data, clean_data
 
 app = Flask(__name__)
+
+# load and clean the data
+df = load_data('data/disaster_messages.csv', 'data/disaster_categories.csv')
+df = clean_data(df)
 
 def tokenize(text):
     tokens = word_tokenize(text)
@@ -25,26 +33,28 @@ def tokenize(text):
 
     return clean_tokens
 
-# load data
-engine = create_engine('sqlite:///../data/YourDatabaseName.db')
-df = pd.read_sql_table('YourTableName', engine)
-
 # load model
-model = joblib.load("../models/your_model_name.pkl")
+model = joblib.load("models/classifier.pkl")
 
 
-# index webpage displays cool visuals and receives user input text for model
+# index webpage displays visuals and receives user input text for the model
 @app.route('/')
 @app.route('/index')
 def index():
     
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
+    # graph 1
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
-    
+
+    # graph 2
+    social_messages = ' '.join(df[df['genre'] == 'social']['message'])
+    social_messages_tok = tokenize(social_messages)
+    social_messages_cnt = pd.Series(social_messages_tok).value_counts()
+    social_messages_df = social_messages_cnt.rename_axis('unique_values').reset_index(name='counts')
+
+
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
     graphs = [
         {
             'data': [
@@ -63,7 +73,25 @@ def index():
                     'title': "Genre"
                 }
             }
-        }
+        },
+        {
+            'data': [
+                Bar(
+                    x=social_messages_df['unique_values'].iloc[:30],
+                    y=social_messages_df['counts'].iloc[:30]
+                 )
+            ],
+
+            'layout': {
+                'title': 'Most used keywords in the "social" genre',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Message"
+                }
+            }
+        }        
     ]
     
     # encode plotly graphs in JSON
@@ -93,7 +121,7 @@ def go():
 
 
 def main():
-    app.run(host='0.0.0.0', port=3001, debug=True)
+    app.run(host='127.0.0.1', port=8080, debug=True)
 
 
 if __name__ == '__main__':
