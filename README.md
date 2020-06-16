@@ -6,10 +6,10 @@ In this project I built an ETL machine learning pipeline that can classify (twit
 
 ### File descriptions
 
-data/process_data.py:  The ETL pipeline used to load and clean data as well as saving it to a database
-models/train_classifier.py: The Machine Learning pipeline used to fit, optimalize, evaluate, and export the model to a Python pickle file
-app/templates/~.html: HTML pages for the web app
-run.py: Start the Python server for the web app
+* data/process_data.py:  The ETL pipeline used to load and clean data as well as saving it to a database
+* models/train_classifier.py: The Machine Learning pipeline used to fit, optimalize, evaluate, and export the model to a Python pickle file
+* app/templates/~.html: HTML pages for the web app
+* run.py: Start the Python server for the web app
 
 
 ### Instructions
