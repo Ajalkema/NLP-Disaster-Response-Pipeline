@@ -2,5 +2,6 @@
 .vscode
 __pycache__
 DisasterResponse_old.db
+DisasterResponse.db
 classifier_test.pkl
 classifier_old.pkl
